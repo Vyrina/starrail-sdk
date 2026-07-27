@@ -1,0 +1,68 @@
+{
+  "detailInfo": {
+    "uid": 800123456,
+    "nickname": "TestTrailblazer",
+    "level": 70,
+    "worldLevel": 6,
+    "friendCount": 42,
+    "headIcon": 200101,
+    "signature": "Testing SDK",
+    "isDisplayAvatar": true,
+    "avatarDetailList": [
+      {
+        "avatarId": 1001,
+        "level": 80,
+        "promotion": 6,
+        "rank": 0,
+        "equipment": {
+          "tid": 21001,
+          "level": 80,
+          "promotion": 6,
+          "rank": 1
+        },
+        "relicList": [
+          {
+            "tid": 61011,
+            "type": 1,
+            "level": 15,
+            "mainAffixId": 1
+          },
+          {
+            "tid": 61012,
+            "type": 2,
+            "level": 15,
+            "mainAffixId": 2
+          }
+        ],
+        "_statsMap": {
+          "HPBase": 1047.82,
+          "HPDelta": 352.4,
+          "HPAddedRatio": 0.1233,
+          "AttackBase": 582.12,
+          "AttackDelta": 112.0,
+          "AttackAddedRatio": 0.0864,
+          "DefenceBase": 485.64,
+          "DefenceDelta": 0,
+          "DefenceAddedRatio": 0,
+          "SpeedBase": 96,
+          "SpeedDelta": 0,
+          "SpeedAddedRatio": 0,
+          "CriticalChanceBase": 0.302,
+          "CriticalDamageBase": 1.124,
+          "StatusProbabilityBase": 0,
+          "StatusResistanceBase": 0,
+          "BreakDamageAddedRatioBase": 0,
+          "SPRatioBase": 0.1,
+          "PhysicalAddedRatio": 0,
+          "FireAddedRatio": 0.388,
+          "IceAddedRatio": 0,
+          "ThunderAddedRatio": 0,
+          "WindAddedRatio": 0,
+          "QuantumAddedRatio": 0,
+          "ImaginaryAddedRatio": 0,
+          "AllDamageTypeAddedRatio": 0
+        }
+      }
+    ]
+  }
+}
