@@ -1,0 +1,57 @@
+{
+  "name": "starrail-sdk",
+  "version": "2.0.0",
+  "description": "Production-grade TypeScript SDK and theorycrafting engine for Honkai: Star Rail",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "keywords": [
+    "honkai-star-rail",
+    "hsr",
+    "starrail-sdk",
+    "sdk",
+    "theorycrafting",
+    "damage-calculator",
+    "enka"
+  ],
+  "author": "Vyrina",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Vyrina/starrail-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Vyrina/starrail-sdk/issues"
+  },
+  "homepage": "https://github.com/Vyrina/starrail-sdk#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "eslint": "^9.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^1.0.0"
+  }
+}
