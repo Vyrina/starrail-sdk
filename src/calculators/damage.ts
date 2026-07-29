@@ -42,7 +42,7 @@ export function calculateDefMultiplier(
 }
 
 export function calculateResMultiplier(targetRes: number, resPen: number = 0): number {
-  return 1 - (targetRes - resPen);
+  return Math.max(0, 1 - (targetRes - resPen));
 }
 
 export function calculateCritMultiplier(
