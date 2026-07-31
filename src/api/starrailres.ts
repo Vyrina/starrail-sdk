@@ -25,6 +25,10 @@ export interface StarRailResClientOptions {
   providers?: string[];
 }
 
+/**
+ * Client for fetching game data (characters, light cones, relics) from the StarRailRes CDN.
+ * Supports multi-provider fallback (GitHub Raw + jsDelivr), LRU caching, and retry with exponential backoff.
+ */
 export class StarRailResClient {
   private readonly lang: SupportedLang;
   private readonly providers: string[];
@@ -33,6 +37,10 @@ export class StarRailResClient {
   private readonly timeoutMs: number;
   private readonly maxRetries: number;
 
+  /**
+   * @param langOrOptions - Language code (`'en'`, `'cn'`, `'jp'`, `'kr'`) or a full options object.
+   * @throws {@link HSRSDKError} if the language is not supported.
+   */
   constructor(langOrOptions?: string | StarRailResClientOptions) {
     let lang = 'en';
     let cacheMaxSize: number | undefined;
@@ -65,18 +73,22 @@ export class StarRailResClient {
     this.maxRetries = maxRetries ?? DEFAULT_MAX_RETRIES;
   }
 
+  /** Fetches the full character index for the configured language. */
   async getCharacters(): Promise<Record<string, StarRailResCharacter>> {
     return this.fetchResource<Record<string, StarRailResCharacter>>('characters.json');
   }
 
+  /** Fetches the full light cone index for the configured language. */
   async getLightCones(): Promise<Record<string, StarRailResLightCone>> {
     return this.fetchResource<Record<string, StarRailResLightCone>>('light_cones.json');
   }
 
+  /** Fetches the full relic set index for the configured language. */
   async getRelics(): Promise<Record<string, StarRailResRelic>> {
     return this.fetchResource<Record<string, StarRailResRelic>>('relics.json');
   }
 
+  /** Clears the internal response cache. */
   clearCache(): void {
     this.cache.clear();
   }

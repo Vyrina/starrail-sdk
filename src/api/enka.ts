@@ -30,6 +30,10 @@ export interface EnkaClientOptions {
   providers?: string[];
 }
 
+/**
+ * Client for fetching player profiles from Enka.Network.
+ * Includes LRU caching, request deduplication, multi-provider fallback, and retry with exponential backoff.
+ */
 export class EnkaClient {
   private cache: LRUCache<EnkaApiResponse>;
   private pendingRequests = new Map<string, Promise<EnkaApiResponse>>();
@@ -37,6 +41,9 @@ export class EnkaClient {
   private readonly maxRetries: number;
   private readonly providers: string[];
 
+  /**
+   * @param options - Client configuration (cache size, TTL, timeout, retries, providers).
+   */
   constructor(options?: EnkaClientOptions) {
     this.cache = new LRUCache<EnkaApiResponse>(
       options?.cacheMaxSize,
@@ -49,6 +56,13 @@ export class EnkaClient {
       : DEFAULT_PROVIDERS;
   }
 
+  /**
+   * Fetches and parses a player profile by UID.
+   * @param uid - 9-digit Honkai: Star Rail UID.
+   * @throws {@link HSRInvalidUIDError} if the UID format is invalid.
+   * @throws {@link HSRDataNotFoundError} if the profile does not exist.
+   * @throws {@link HSRRateLimitError} if rate-limited by Enka.Network.
+   */
   async getProfile(uid: string): Promise<PlayerProfile> {
     if (!UID_REGEX.test(uid)) {
       throw new HSRInvalidUIDError(uid);
@@ -72,10 +86,15 @@ export class EnkaClient {
     return this.parseResponse(uid, response);
   }
 
+  /**
+   * Checks whether a UID string is a valid 9-digit format.
+   * @param uid - The UID to validate.
+   */
   static isValidUID(uid: string): boolean {
     return UID_REGEX.test(uid);
   }
 
+  /** Clears the internal response cache. */
   clearCache(): void {
     this.cache.clear();
   }
