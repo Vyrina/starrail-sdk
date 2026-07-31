@@ -50,10 +50,20 @@ export interface SuperBreakDamageBreakdown {
   totalDamage: number;
 }
 
+/**
+ * Calculates break damage as a single number.
+ * @param input - Break damage parameters including element, break effect, and target stats.
+ * @returns The total break damage value.
+ */
 export function calculateBreakDamage(input: BreakDamageInput): number {
   return calculateBreakDamageDetailed(input).totalDamage;
 }
 
+/**
+ * Calculates break damage with a full breakdown of each multiplier.
+ * @param input - Break damage parameters including element, break effect, and target stats.
+ * @returns A {@link BreakDamageBreakdown} with each multiplier and the total.
+ */
 export function calculateBreakDamageDetailed(input: BreakDamageInput): BreakDamageBreakdown {
   const levelMult = getLevelMultiplier(input.attackerLevel);
   const elementMult = ELEMENT_BREAK_MULT[input.element] ?? 1.0;
@@ -70,10 +80,20 @@ export function calculateBreakDamageDetailed(input: BreakDamageInput): BreakDama
   return { levelMult, elementMult, breakMult, toughnessMaxMult, defMult, resMult, vulnMult, totalDamage };
 }
 
+/**
+ * Calculates super break damage as a single number.
+ * @param input - Super break parameters including toughness reduction and super break buff.
+ * @returns The total super break damage value.
+ */
 export function calculateSuperBreakDamage(input: SuperBreakDamageInput): number {
   return calculateSuperBreakDamageDetailed(input).totalDamage;
 }
 
+/**
+ * Calculates super break damage with a full breakdown of each multiplier.
+ * @param input - Super break parameters including toughness reduction and super break buff.
+ * @returns A {@link SuperBreakDamageBreakdown} with each multiplier and the total.
+ */
 export function calculateSuperBreakDamageDetailed(input: SuperBreakDamageInput): SuperBreakDamageBreakdown {
   const levelMult = getLevelMultiplier(input.attackerLevel);
   const toughnessFactor = input.toughnessReduce / 30;
