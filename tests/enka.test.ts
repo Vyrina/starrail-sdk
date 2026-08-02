@@ -110,6 +110,20 @@ describe('EnkaClient', () => {
 
       expect(fetch).toHaveBeenCalledTimes(1);
     });
+
+    it('deduplicates concurrent requests to the same UID', async () => {
+      const client = new EnkaClient();
+      const [p1, p2, p3] = await Promise.all([
+        client.getProfile('800123456'),
+        client.getProfile('800123456'),
+        client.getProfile('800123456'),
+      ]);
+
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(p1.uid).toBe('800123456');
+      expect(p2.uid).toBe('800123456');
+      expect(p3.uid).toBe('800123456');
+    });
   });
 
   describe('Fallback providers', () => {

@@ -104,6 +104,27 @@ describe('StarRailResClient', () => {
       expect(fetch).toHaveBeenCalledTimes(1);
     });
 
+    it('deduplicates concurrent requests to the same resource', async () => {
+      const mockData = { '1001': { id: '1001', name: 'March 7th' } };
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve(mockData),
+      }));
+
+      const client = new StarRailResClient('en');
+      const [r1, r2, r3] = await Promise.all([
+        client.getCharacters(),
+        client.getCharacters(),
+        client.getCharacters(),
+      ]);
+
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(r1).toEqual(mockData);
+      expect(r2).toEqual(mockData);
+      expect(r3).toEqual(mockData);
+    });
+
     it('clearCache forces refetch', async () => {
       const mockData = { '1001': { id: '1001', name: 'March 7th' } };
       vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
