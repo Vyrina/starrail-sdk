@@ -223,6 +223,7 @@ import {
   HSRTimeoutError,
 } from 'starrail-sdk';
 
+// EnkaClient errors
 try {
   await enka.getProfile('invalid');
 } catch (err) {
@@ -232,6 +233,19 @@ try {
     // Rate limited
   } else if (err instanceof HSRTimeoutError) {
     // Request timed out
+  }
+}
+
+// StarRailResClient errors
+try {
+  await res.getCharacters();
+} catch (err) {
+  if (err instanceof HSRDataNotFoundError) {
+    // Resource not found (404)
+  } else if (err instanceof HSRTimeoutError) {
+    // CDN request timed out after all retries
+  } else if (err instanceof HSRSDKError) {
+    // Other SDK errors (unsupported lang, server errors, etc.)
   }
 }
 ```
