@@ -148,9 +148,9 @@ calculateEnergyGain(30, 0.194); // 35.82
 
 canReachUltimate(
   [{ baseEnergy: 30 }, { baseEnergy: 30 }, { baseEnergy: 30 }, { baseEnergy: 20 }],
-  120,
-  0.194,
-  5
+  120,       // ultimate cost
+  0.194,     // ERR%
+  5          // flat energy bonus (e.g. from energy rope)
 ); // true
 ```
 
