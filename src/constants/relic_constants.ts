@@ -4,7 +4,7 @@ export const MAX_SUBSTAT_ROLLS: Record<string, number> = {
   "DEF": 21.1687,
   "HP%": 0.0432,
   "ATK%": 0.0432,
-  "DEF%": 0.0432,
+  "DEF%": 0.054,
   "SPD": 2.6,
   "CRIT Rate": 0.0324,
   "CRIT DMG": 0.0648,
