@@ -68,7 +68,7 @@ export function calculateBreakDamageDetailed(input: BreakDamageInput): BreakDama
   const levelMult = getLevelMultiplier(input.attackerLevel);
   const elementMult = ELEMENT_BREAK_MULT[input.element] ?? 1.0;
   const breakMult = 1 + input.breakEffect;
-  const toughnessMaxMult = 0.5 + input.toughnessMax / 120;
+  const toughnessMaxMult = 0.5 + input.toughnessMax / 40;
   const defMult = calculateDefMultiplier(
     input.targetBaseDef, input.attackerLevel, input.defShred, input.defIgnore
   );

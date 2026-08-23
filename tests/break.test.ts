@@ -16,7 +16,7 @@ describe('Break & Super Break Engine', () => {
         resPen: 0,
         vulnerabilityPercent: 0
       });
-      expect(result).toBeCloseTo(26372.85, 1);
+      expect(result).toBeCloseTo(71583.51, 1);
     });
 
     it('Quantum break has 0.5 element multiplier', () => {
@@ -32,7 +32,7 @@ describe('Break & Super Break Engine', () => {
         resPen: 0,
         vulnerabilityPercent: 0
       });
-      expect(result).toBeCloseTo(1412.83, 0);
+      expect(result).toBeCloseTo(3296.61, 0);
     });
 
     it('Wind break has 1.5 element multiplier', () => {
@@ -48,7 +48,7 @@ describe('Break & Super Break Engine', () => {
         resPen: 0,
         vulnerabilityPercent: 0
       });
-      expect(result).toBeCloseTo(4238.49, 0);
+      expect(result).toBeCloseTo(9889.82, 0);
     });
   });
 

@@ -1,6 +1,6 @@
 {
   "name": "starrail-sdk",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Production-grade TypeScript SDK and theorycrafting engine for Honkai: Star Rail",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
