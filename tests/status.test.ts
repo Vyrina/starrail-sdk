@@ -25,9 +25,9 @@ describe('Status & Effect Hit Rate Engine', () => {
     expect(calculateRealHitRate(0, 1.0, 0)).toBe(0);
   });
 
-  it('high EHR can push probability above 100%', () => {
+  it('real hit rate is clamped at 100% even with excess EHR', () => {
     const result = calculateRealHitRate(1.0, 1.0, 0);
-    expect(result).toBeCloseTo(2.0, 5);
+    expect(result).toBeCloseTo(1.0, 5);
   });
 
   it('default targetDebuffRes is 0', () => {

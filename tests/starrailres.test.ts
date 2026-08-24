@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { StarRailResClient } from '../src/api/starrailres.js';
-import { HSRSDKError, HSRDataNotFoundError, HSRTimeoutError } from '../src/types/errors.js';
+import { HSRSDKError, HSRDataNotFoundError, HSRRateLimitError, HSRTimeoutError } from '../src/types/errors.js';
 
 describe('StarRailResClient', () => {
   afterEach(() => {
@@ -72,6 +72,22 @@ describe('StarRailResClient', () => {
       const client = new StarRailResClient({ lang: 'en', maxRetries: 3 });
       await expect(client.getCharacters()).rejects.toThrow(HSRDataNotFoundError);
       expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('throws HSRRateLimitError on 429 (retries with backoff like 5xx)', async () => {
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 429,
+        statusText: 'Too Many Requests',
+      });
+
+      vi.stubGlobal('fetch', fetchMock);
+
+      const client = new StarRailResClient({ lang: 'en', maxRetries: 2, providers: ['https://cdn.example.com'] });
+      (client as unknown as { delay: (ms: number) => Promise<void> }).delay = () => Promise.resolve();
+
+      await expect(client.getCharacters()).rejects.toThrow(HSRRateLimitError);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
     });
 
     it('throws after all retries exhausted', async () => {

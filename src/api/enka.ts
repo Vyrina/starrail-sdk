@@ -190,8 +190,13 @@ export class EnkaClient {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  private parseResponse(_uid: string, raw: EnkaApiResponse): PlayerProfile {
+  private parseResponse(uid: string, raw: EnkaApiResponse): PlayerProfile {
     const info = raw.detailInfo;
+    if (!info) {
+      throw new HSRDataNotFoundError(
+        `player detail info for UID ${uid} (profile may be private, or Enka.Network has no cached snapshot for it)`
+      );
+    }
     const characters: PlayerCharacter[] = (info.avatarDetailList ?? []).map(avatar => {
       const stats = this.mapStats(avatar._statsMap ?? {});
 

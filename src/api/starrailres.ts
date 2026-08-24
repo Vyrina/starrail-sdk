@@ -1,5 +1,5 @@
 import { LRUCache } from './cache.js';
-import { HSRSDKError, HSRDataNotFoundError, HSRTimeoutError } from '../types/errors.js';
+import { HSRSDKError, HSRDataNotFoundError, HSRRateLimitError, HSRTimeoutError } from '../types/errors.js';
 import type { StarRailResCharacter, StarRailResLightCone, StarRailResRelic } from '../types/api.js';
 import { SDK_VERSION } from '../version.js';
 
@@ -146,6 +146,9 @@ export class StarRailResClient {
 
         clearTimeout(timer);
 
+        if (res.status === 429) {
+          throw new HSRRateLimitError('StarRailRes');
+        }
         if (res.status === 404) {
           throw new HSRDataNotFoundError(`${filename} (lang: ${this.lang})`);
         }

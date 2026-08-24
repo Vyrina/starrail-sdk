@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { EnkaClient } from '../src/api/enka.js';
-import { HSRInvalidUIDError } from '../src/types/errors.js';
+import { HSRInvalidUIDError, HSRDataNotFoundError, HSRRateLimitError } from '../src/types/errors.js';
 import mockData from './fixtures/enka_mock_uid.json';
 
 describe('EnkaClient', () => {
@@ -123,6 +123,35 @@ describe('EnkaClient', () => {
       expect(p1.uid).toBe('800123456');
       expect(p2.uid).toBe('800123456');
       expect(p3.uid).toBe('800123456');
+    });
+
+    it('throws HSRDataNotFoundError when response has no detailInfo (e.g. private/uncached profile)', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({})
+      }));
+
+      const client = new EnkaClient();
+      await expect(client.getProfile('800123456')).rejects.toThrow(HSRDataNotFoundError);
+    });
+  });
+
+  describe('Rate limiting', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('throws HSRRateLimitError on 429', async () => {
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 429,
+        statusText: 'Too Many Requests',
+      });
+      vi.stubGlobal('fetch', fetchMock);
+
+      const client = new EnkaClient({ maxRetries: 1 });
+      await expect(client.getProfile('800123456')).rejects.toThrow(HSRRateLimitError);
     });
   });
 
