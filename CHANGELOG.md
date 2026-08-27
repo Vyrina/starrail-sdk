@@ -5,6 +5,20 @@ All notable changes to `starrail-sdk` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-08-28
+
+### Added
+- `calculateTotalRollValueDetailed` for a per-substat roll value breakdown.
+
+### Fixed
+- `calculateRealHitRate` is now clamped to a maximum of 100%.
+- `StarRailResClient` now throws `HSRRateLimitError` on 429, consistent with `EnkaClient`.
+- `EnkaClient` now throws a clear error when a profile has no detail data (private/uncached).
+- Wrong JSDoc substat key example in `relic.ts`.
+
+### Changed
+- `calculateResMultiplier`/`calculateCritMultiplier` now use internal `clamp()` utility (no output change).
+
 ## [2.0.3] - 2026-08-24
 
 ### Fixed

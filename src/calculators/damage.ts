@@ -1,3 +1,5 @@
+import { clamp } from '../utils/math.js';
+
 export type CritMode = 'none' | 'crit' | 'average';
 
 export interface DamageInput {
@@ -59,7 +61,7 @@ export function calculateDefMultiplier(
  * @param resPen - Resistance penetration as a decimal. Defaults to 0.
  */
 export function calculateResMultiplier(targetRes: number, resPen: number = 0): number {
-  return Math.max(0, 1 - (targetRes - resPen));
+  return clamp(1 - (targetRes - resPen), 0, Infinity);
 }
 
 /**
@@ -79,7 +81,7 @@ export function calculateCritMultiplier(
     case 'crit':
       return 1 + critDmg;
     case 'average':
-      return 1 + Math.min(1.0, critRate) * critDmg;
+      return 1 + clamp(critRate, -Infinity, 1.0) * critDmg;
   }
 }
 

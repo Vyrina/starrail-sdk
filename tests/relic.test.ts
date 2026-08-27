@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateRollValue, calculateTotalRollValue } from '../src/calculators/relic.js';
+import { calculateRollValue, calculateTotalRollValue, calculateTotalRollValueDetailed } from '../src/calculators/relic.js';
 
 describe('Relic Substat & Score Engine', () => {
   describe('calculateRollValue', () => {
@@ -51,4 +51,40 @@ describe('Relic Substat & Score Engine', () => {
       expect(calculateTotalRollValue([])).toBe(0);
     });
   });
+
+  describe('calculateTotalRollValueDetailed', () => {
+    it('returns a per-substat breakdown matching calculateRollValue', () => {
+      const substats = [
+        { key: 'CRIT DMG', value: 0.0648 },
+        { key: 'SPD', value: 1.3 }
+      ];
+      const result = calculateTotalRollValueDetailed(substats);
+      expect(result).toEqual([
+        { key: 'CRIT DMG', value: 0.0648, maxRoll: 0.0648, rollValue: 1.0 },
+        { key: 'SPD', value: 1.3, maxRoll: 2.6, rollValue: 0.5 }
+      ]);
+    });
+
+    it('empty substats returns empty array', () => {
+      expect(calculateTotalRollValueDetailed([])).toEqual([]);
+    });
+
+    it('sum of individual rollValue entries matches calculateTotalRollValue', () => {
+      const substats = [
+        { key: 'CRIT DMG', value: 0.1296 },
+        { key: 'CRIT Rate', value: 0.0324 },
+        { key: 'ATK%', value: 0.0216 },
+        { key: 'SPD', value: 2.6 }
+      ];
+      const detailed = calculateTotalRollValueDetailed(substats);
+      const sum = detailed.reduce((total, r) => total + r.rollValue, 0);
+      expect(sum).toBeCloseTo(calculateTotalRollValue(substats), 5);
+    });
+
+    it('throws on unknown substat type, same as calculateRollValue', () => {
+      expect(() => calculateTotalRollValueDetailed([{ key: 'InvalidStat', value: 10 }]))
+        .toThrow('Unknown substat type');
+    });
+  });
 });
+
