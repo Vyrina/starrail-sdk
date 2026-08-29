@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { EnkaClient } from '../src/api/enka.js';
 import { HSRInvalidUIDError, HSRDataNotFoundError, HSRRateLimitError } from '../src/types/errors.js';
 import mockData from './fixtures/enka_mock_uid.json';
+import mockFlatProps from './fixtures/enka_mock_flat_props.json';
 
 describe('EnkaClient', () => {
   describe('UID validation', () => {
@@ -55,10 +56,10 @@ describe('EnkaClient', () => {
       const profile = await client.getProfile('800123456');
 
       expect(profile.uid).toBe('800123456');
-      expect(profile.nickname).toBe('TestTrailblazer');
+      expect(profile.nickname).toBe('Vyrina');
       expect(profile.level).toBe(70);
       expect(profile.worldLevel).toBe(6);
-      expect(profile.signature).toBe('Testing SDK');
+      expect(profile.signature).toBe('im bored');
     });
 
     it('parses character stats via property mapping', async () => {
@@ -243,4 +244,76 @@ describe('EnkaClient', () => {
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });
   });
+
+  describe('_flat.props stat aggregation', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('parses stats from equipment and relic _flat.props when _statsMap is absent', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve(mockFlatProps)
+      }));
+
+      const client = new EnkaClient();
+      const profile = await client.getProfile('800654321');
+      const char = profile.characters[0];
+
+      expect(char.stats.baseHp).toBeCloseTo(952.56, 2);
+      expect(char.stats.baseAtk).toBeCloseTo(529.20, 2);
+      expect(char.stats.baseDef).toBeCloseTo(463.05, 2);
+
+      expect(char.stats.critRate).toBeCloseTo(0.0874, 4);
+      expect(char.stats.critDmg).toBeCloseTo(0.1619, 4);
+
+      expect(char.stats.flatHp).toBeCloseTo(705.6, 1);
+      expect(char.stats.flatAtk).toBeCloseTo(352.8, 1);
+      expect(char.stats.percentAtk).toBeCloseTo(0.0389, 4);
+      expect(char.stats.fireDmgBoost).toBeCloseTo(0.388, 3);
+      expect(char.stats.energyRecovery).toBeCloseTo(0.0583, 4);
+      expect(char.stats.breakEffect).toBeCloseTo(0.0518, 4);
+      expect(char.stats.effectHit).toBeCloseTo(0.0389, 4);
+      expect(char.stats.flatSpeed).toBeCloseTo(2.3, 1);
+      expect(char.stats.flatDef).toBeCloseTo(33.87, 1);
+      expect(char.stats.percentHp).toBeCloseTo(0.0778, 4);
+    });
+
+    it('applies base crit defaults when no crit data is present', async () => {
+      const noCritData = {
+        detailInfo: {
+          uid: 800111222,
+          nickname: 'Vyrina',
+          level: 60,
+          worldLevel: 5,
+          friendCount: 0,
+          headIcon: 200101,
+          signature: '',
+          isDisplayAvatar: true,
+          avatarDetailList: [{
+            avatarId: 1001,
+            level: 80,
+            promotion: 6,
+            rank: 0,
+            relicList: []
+          }]
+        }
+      };
+
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve(noCritData)
+      }));
+
+      const client = new EnkaClient();
+      const profile = await client.getProfile('800111222');
+      const char = profile.characters[0];
+
+      expect(char.stats.critRate).toBe(0.05);
+      expect(char.stats.critDmg).toBe(0.50);
+    });
+  });
 });
+

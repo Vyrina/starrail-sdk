@@ -1,6 +1,6 @@
 import { LRUCache } from './cache.js';
 import { HSRSDKError, HSRDataNotFoundError, HSRRateLimitError, HSRTimeoutError } from '../types/errors.js';
-import type { StarRailResCharacter, StarRailResLightCone, StarRailResRelic } from '../types/api.js';
+import type { StarRailResCharacter, StarRailResLightCone, StarRailResRelic, StarRailResRelicSet, StarRailResSkillTree, StarRailResLightConeRank } from '../types/api.js';
 import { SDK_VERSION } from '../version.js';
 
 const SUPPORTED_LANGS = ['en', 'cn', 'jp', 'kr'] as const;
@@ -83,9 +83,24 @@ export class StarRailResClient {
     return this.fetchResource<Record<string, StarRailResLightCone>>('light_cones.json');
   }
 
-  /** Fetches the full relic set index for the configured language. */
+  /** Fetches the full individual relic piece index for the configured language. */
   async getRelics(): Promise<Record<string, StarRailResRelic>> {
     return this.fetchResource<Record<string, StarRailResRelic>>('relics.json');
+  }
+
+  /** Fetches the full relic set index (set names, not individual pieces) for the configured language. */
+  async getRelicSets(): Promise<Record<string, StarRailResRelicSet>> {
+    return this.fetchResource<Record<string, StarRailResRelicSet>>('relic_sets.json');
+  }
+
+  /** Fetches the character skill tree index (trace nodes with stat bonuses). */
+  async getSkillTrees(): Promise<Record<string, StarRailResSkillTree>> {
+    return this.fetchResource<Record<string, StarRailResSkillTree>>('character_skill_trees.json');
+  }
+
+  /** Fetches the light cone rank (superimposition) index. */
+  async getLightConeRanks(): Promise<Record<string, StarRailResLightConeRank>> {
+    return this.fetchResource<Record<string, StarRailResLightConeRank>>('light_cone_ranks.json');
   }
 
   /** Clears the internal response cache. */

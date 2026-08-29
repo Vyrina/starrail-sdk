@@ -14,6 +14,11 @@ export interface EnkaDetailInfo {
   avatarDetailList: EnkaAvatarDetail[];
 }
 
+export interface EnkaSkillTreePoint {
+  pointId: number;
+  level: number;
+}
+
 export interface EnkaAvatarDetail {
   avatarId: number;
   level: number;
@@ -21,7 +26,17 @@ export interface EnkaAvatarDetail {
   rank: number;
   equipment?: EnkaEquipment;
   relicList?: EnkaRelic[];
-  _statsMap: Record<string, number>;
+  skillTreeList?: EnkaSkillTreePoint[];
+  _statsMap?: Record<string, number>;
+}
+
+export interface EnkaFlatProp {
+  type: string;
+  value: number;
+}
+
+export interface EnkaFlat {
+  props: EnkaFlatProp[];
 }
 
 export interface EnkaEquipment {
@@ -29,6 +44,13 @@ export interface EnkaEquipment {
   level: number;
   promotion: number;
   rank: number;
+  _flat?: EnkaFlat;
+}
+
+export interface EnkaSubAffix {
+  affixId: number;
+  cnt: number;
+  step?: number;
 }
 
 export interface EnkaRelic {
@@ -36,6 +58,8 @@ export interface EnkaRelic {
   type: number;
   level: number;
   mainAffixId: number;
+  subAffixList?: EnkaSubAffix[];
+  _flat?: EnkaFlat;
 }
 
 export interface StarRailResCharacter {
@@ -60,5 +84,43 @@ export interface StarRailResRelic {
   id: string;
   name: string;
   set_id: string;
+  rarity: number;
+  type: string;
   icon: string;
+}
+
+export interface StarRailResRelicSet {
+  id: string;
+  name: string;
+  desc: string[];
+  properties: StarRailResStatProperty[][];
+  icon: string;
+}
+
+export interface StarRailResStatProperty {
+  type: string;
+  value: number;
+}
+
+export interface StarRailResSkillTreeLevel {
+  promotion: number;
+  level: number;
+  properties: StarRailResStatProperty[];
+}
+
+export interface StarRailResSkillTree {
+  id: string;
+  name: string;
+  max_level: number;
+  anchor: string;
+  levels: StarRailResSkillTreeLevel[];
+  icon: string;
+}
+
+export interface StarRailResLightConeRank {
+  id: string;
+  skill: string;
+  desc: string;
+  params: number[][];
+  properties: StarRailResStatProperty[][];
 }

@@ -1,0 +1,79 @@
+{
+  "detailInfo": {
+    "uid": 800654321,
+    "nickname": "Vyrina",
+    "level": 65,
+    "worldLevel": 5,
+    "friendCount": 10,
+    "headIcon": 200102,
+    "signature": "hi",
+    "isDisplayAvatar": true,
+    "avatarDetailList": [
+      {
+        "avatarId": 1209,
+        "level": 80,
+        "promotion": 6,
+        "rank": 2,
+        "equipment": {
+          "tid": 23000,
+          "level": 80,
+          "promotion": 6,
+          "rank": 1,
+          "_flat": {
+            "props": [
+              { "type": "BaseHP", "value": 952.56 },
+              { "type": "BaseAttack", "value": 529.20 },
+              { "type": "BaseDefence", "value": 463.05 }
+            ]
+          }
+        },
+        "relicList": [
+          {
+            "tid": 61021,
+            "type": 1,
+            "level": 15,
+            "mainAffixId": 1,
+            "_flat": {
+              "props": [
+                { "type": "HPDelta", "value": 705.6 },
+                { "type": "CriticalChance", "value": 0.0583 },
+                { "type": "CriticalDamage", "value": 0.1101 },
+                { "type": "AttackAddedRatio", "value": 0.0389 },
+                { "type": "SpeedDelta", "value": 2.3 }
+              ]
+            }
+          },
+          {
+            "tid": 61022,
+            "type": 2,
+            "level": 15,
+            "mainAffixId": 2,
+            "_flat": {
+              "props": [
+                { "type": "AttackDelta", "value": 352.8 },
+                { "type": "CriticalChance", "value": 0.0291 },
+                { "type": "CriticalDamage", "value": 0.0518 },
+                { "type": "BreakDamageAddedRatio", "value": 0.0518 },
+                { "type": "StatusProbability", "value": 0.0389 }
+              ]
+            }
+          },
+          {
+            "tid": 61023,
+            "type": 3,
+            "level": 15,
+            "mainAffixId": 3,
+            "_flat": {
+              "props": [
+                { "type": "FireAddedRatio", "value": 0.388 },
+                { "type": "HPAddedRatio", "value": 0.0778 },
+                { "type": "DefenceDelta", "value": 33.87 },
+                { "type": "SPRatio", "value": 0.0583 }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

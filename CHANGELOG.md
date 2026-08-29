@@ -5,6 +5,15 @@ All notable changes to `starrail-sdk` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-08-30
+
+### Added
+- `resolveCharacter`, `resolveLightCone`, `resolveRelic` for mapping Enka IDs to StarRailRes game data.
+- `resolveFullStats` for aggregating trace, LC rank, and relic set stat bonuses.
+- `StarRailResClient.getSkillTrees()` and `StarRailResClient.getLightConeRanks()`.
+- `skillTreePoints` on `PlayerCharacter`, `subAffixes` on `PlayerRelic`.
+- Codename maps for element, path, and relic slot (`hsr_code_names.ts`).
+
 ## [2.1.0] - 2026-08-28
 
 ### Added

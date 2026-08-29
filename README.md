@@ -210,6 +210,48 @@ const res = new StarRailResClient({
 const characters = await res.getCharacters();
 const lightCones = await res.getLightCones();
 const relics = await res.getRelics();
+const relicSets = await res.getRelicSets();
+const skillTrees = await res.getSkillTrees();
+const lightConeRanks = await res.getLightConeRanks();
+```
+
+### Resolvers
+
+Map raw Enka player data to named game objects using StarRailRes metadata.
+
+#### Character & Equipment
+
+```typescript
+import { resolveCharacter } from 'starrail-sdk';
+
+const profile = await enka.getProfile('800123456');
+const gameData = {
+  characters: await res.getCharacters(),
+  lightCones: await res.getLightCones(),
+  relics: await res.getRelics(),
+  relicSets: await res.getRelicSets(),
+};
+
+const char = resolveCharacter(profile.characters[0], gameData);
+console.log(char.name, char.element, char.path); // "March 7th" "Ice" "Preservation"
+console.log(char.lightCone?.name);                // "Moment of Victory"
+console.log(char.relics[0].setName);              // "Knight of Purity Palace"
+```
+
+#### Full Stats (Traces + LC Passive + Set Bonus)
+
+```typescript
+import { resolveFullStats } from 'starrail-sdk';
+
+const statsData = {
+  skillTrees: await res.getSkillTrees(),
+  lightConeRanks: await res.getLightConeRanks(),
+  relicSets: await res.getRelicSets(),
+  relics: await res.getRelics(),
+};
+
+const fullStats = resolveFullStats(profile.characters[0], statsData);
+console.log(fullStats.critRate, fullStats.critDmg); // includes trace + LC + set bonuses
 ```
 
 ### Errors

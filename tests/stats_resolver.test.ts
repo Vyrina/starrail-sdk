@@ -1,0 +1,147 @@
+import { describe, it, expect } from 'vitest';
+import { resolveFullStats } from '../src/resolvers/stats.js';
+import { createEmptyStats } from '../src/types/stats.js';
+import type { PlayerCharacter } from '../src/types/player.js';
+import type { StatsResolverData } from '../src/resolvers/stats.js';
+
+const data: StatsResolverData = {
+  skillTrees: {
+    '1001201': {
+      id: '1001201', name: 'DMG Boost: Ice', max_level: 1, anchor: 'Point09',
+      levels: [{ promotion: 0, level: 1, properties: [{ type: 'IceAddedRatio', value: 0.032 }] }], icon: ''
+    },
+    '1001202': {
+      id: '1001202', name: 'DEF Boost', max_level: 1, anchor: 'Point10',
+      levels: [{ promotion: 2, level: 0, properties: [{ type: 'DefenceAddedRatio', value: 0.05 }] }], icon: ''
+    },
+    '1001001': {
+      id: '1001001', name: '', max_level: 6, anchor: 'Point01',
+      levels: [{ promotion: 0, level: 0, properties: [] }], icon: ''
+    }
+  },
+  lightConeRanks: {
+    '20003': {
+      id: '20003', skill: 'Stasis', desc: 'test', params: [[0.16, 0.5, 0.16]],
+      properties: [
+        [{ type: 'DefenceAddedRatio', value: 0.16 }],
+        [{ type: 'DefenceAddedRatio', value: 0.20 }],
+        [{ type: 'DefenceAddedRatio', value: 0.24 }],
+        [{ type: 'DefenceAddedRatio', value: 0.28 }],
+        [{ type: 'DefenceAddedRatio', value: 0.32 }]
+      ]
+    },
+    '20000': {
+      id: '20000', skill: 'Crisis', desc: 'test', params: [[0.12, 3]],
+      properties: [[], [], [], [], []]
+    }
+  },
+  relicSets: {
+    '102': {
+      id: '102', name: 'Musketeer of Wild Wheat', icon: '', desc: ['2pc', '4pc'],
+      properties: [[{ type: 'AttackAddedRatio', value: 0.12 }], [{ type: 'SpeedAddedRatio', value: 0.06 }]]
+    },
+    '104': {
+      id: '104', name: 'Hunter of Glacial Forest', icon: '', desc: ['2pc', '4pc'],
+      properties: [[{ type: 'IceAddedRatio', value: 0.1 }], []]
+    }
+  },
+  relics: {
+    '61011': { id: '61011', name: 'Head', set_id: '102', rarity: 5, type: 'HEAD', icon: '' },
+    '61012': { id: '61012', name: 'Hands', set_id: '102', rarity: 5, type: 'HAND', icon: '' },
+    '61013': { id: '61013', name: 'Body', set_id: '102', rarity: 5, type: 'BODY', icon: '' },
+    '61014': { id: '61014', name: 'Feet', set_id: '102', rarity: 5, type: 'FOOT', icon: '' },
+    '63041': { id: '63041', name: 'Sphere', set_id: '104', rarity: 5, type: 'NECK', icon: '' },
+    '63042': { id: '63042', name: 'Rope', set_id: '104', rarity: 5, type: 'OBJECT', icon: '' }
+  }
+};
+
+function char(overrides: Partial<PlayerCharacter> = {}): PlayerCharacter {
+  return { id: 1001, level: 80, promotion: 6, eidolon: 0, stats: createEmptyStats(), relics: [], ...overrides };
+}
+
+describe('resolveFullStats', () => {
+  it('trace stat nodes sum correctly', () => {
+    const c = char({
+      skillTreePoints: [
+        { pointId: 1001201, level: 1 },
+        { pointId: 1001202, level: 1 },
+        { pointId: 1001001, level: 6 } // skill node, skipped
+      ]
+    });
+    const s = resolveFullStats(c, data);
+    expect(s.iceDmgBoost).toBeCloseTo(0.032);
+    expect(s.percentDef).toBeCloseTo(0.05);
+  });
+
+  it('level 0 traces ignored', () => {
+    const s = resolveFullStats(char({ skillTreePoints: [{ pointId: 1001201, level: 0 }] }), data);
+    expect(s.iceDmgBoost).toBe(0);
+  });
+
+  it('LC S3 = index 2 = 0.24 DEF', () => {
+    const s = resolveFullStats(char({ equipment: { id: 20003, level: 80, promotion: 6, rank: 3 } }), data);
+    expect(s.percentDef).toBeCloseTo(0.24);
+  });
+
+  it('LC with empty properties (conditional) = no stats', () => {
+    const s = resolveFullStats(char({ equipment: { id: 20000, level: 80, promotion: 6, rank: 1 } }), data);
+    expect(s.critRate).toBe(0);
+  });
+
+  it('2pc set bonus only', () => {
+    const s = resolveFullStats(char({
+      relics: [
+        { id: 61011, type: 1, level: 15, mainAffixId: 1 },
+        { id: 61012, type: 2, level: 15, mainAffixId: 1 }
+      ]
+    }), data);
+    expect(s.percentAtk).toBeCloseTo(0.12);
+    expect(s.percentSpeed).toBe(0);
+  });
+
+  it('4pc = 2pc + 4pc bonus', () => {
+    const s = resolveFullStats(char({
+      relics: [
+        { id: 61011, type: 1, level: 15, mainAffixId: 1 },
+        { id: 61012, type: 2, level: 15, mainAffixId: 1 },
+        { id: 61013, type: 3, level: 15, mainAffixId: 1 },
+        { id: 61014, type: 4, level: 15, mainAffixId: 1 }
+      ]
+    }), data);
+    expect(s.percentAtk).toBeCloseTo(0.12);
+    expect(s.percentSpeed).toBeCloseTo(0.06);
+  });
+
+  it('2+2 mixed sets', () => {
+    const s = resolveFullStats(char({
+      relics: [
+        { id: 61011, type: 1, level: 15, mainAffixId: 1 },
+        { id: 61012, type: 2, level: 15, mainAffixId: 1 },
+        { id: 63041, type: 5, level: 15, mainAffixId: 1 },
+        { id: 63042, type: 6, level: 15, mainAffixId: 1 }
+      ]
+    }), data);
+    expect(s.percentAtk).toBeCloseTo(0.12);
+    expect(s.iceDmgBoost).toBeCloseTo(0.1);
+  });
+
+  it('all 3 sources combined', () => {
+    const s = resolveFullStats(char({
+      skillTreePoints: [{ pointId: 1001201, level: 1 }],
+      equipment: { id: 20003, level: 80, promotion: 6, rank: 1 },
+      relics: [
+        { id: 63041, type: 5, level: 15, mainAffixId: 1 },
+        { id: 63042, type: 6, level: 15, mainAffixId: 1 }
+      ]
+    }), data);
+    expect(s.iceDmgBoost).toBeCloseTo(0.032 + 0.1);
+    expect(s.percentDef).toBeCloseTo(0.16);
+  });
+
+  it('does not mutate input', () => {
+    const c = char({ skillTreePoints: [{ pointId: 1001201, level: 1 }] });
+    const before = c.stats.iceDmgBoost;
+    resolveFullStats(c, data);
+    expect(c.stats.iceDmgBoost).toBe(before);
+  });
+});

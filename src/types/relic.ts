@@ -12,8 +12,9 @@ export interface RelicData {
   slot: RelicSlot;
   rarity: number;
   level: number;
-  mainStat: SubStatData;
-  subStats: SubStatData[];
+  // left undefined by resolveCharacter(), substat decoding not yet implemented
+  mainStat?: SubStatData;
+  subStats?: SubStatData[];
 }
 
 export interface RollValueResult {

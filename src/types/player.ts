@@ -1,4 +1,5 @@
 import type { ComputedStats } from './stats.js';
+import type { EnkaSubAffix, EnkaSkillTreePoint } from './api.js';
 
 export interface PlayerProfile {
   uid: string;
@@ -17,6 +18,7 @@ export interface PlayerCharacter {
   stats: ComputedStats;
   equipment?: PlayerEquipment;
   relics: PlayerRelic[];
+  skillTreePoints?: EnkaSkillTreePoint[];
 }
 
 export interface PlayerEquipment {
@@ -31,4 +33,6 @@ export interface PlayerRelic {
   type: number;
   level: number;
   mainAffixId: number;
+  // Raw rolls from Enka, not decoded to {key,value} (needs relic_sub_affixes.json formula)
+  subAffixes?: EnkaSubAffix[];
 }

@@ -198,7 +198,32 @@ export class EnkaClient {
       );
     }
     const characters: PlayerCharacter[] = (info.avatarDetailList ?? []).map(avatar => {
-      const stats = this.mapStats(avatar._statsMap ?? {});
+      let stats: ComputedStats;
+
+      if (avatar._statsMap && Object.keys(avatar._statsMap).length > 0) {
+        // Legacy path: pre-computed stats map
+        stats = this.mapStats(avatar._statsMap);
+      } else {
+        // Real API path: aggregate _flat.props from equipment + relics
+        const propsMap: Record<string, number> = {};
+        if (avatar.equipment?._flat?.props) {
+          for (const p of avatar.equipment._flat.props) {
+            propsMap[p.type] = (propsMap[p.type] ?? 0) + p.value;
+          }
+        }
+        for (const relic of avatar.relicList ?? []) {
+          if (relic._flat?.props) {
+            for (const p of relic._flat.props) {
+              propsMap[p.type] = (propsMap[p.type] ?? 0) + p.value;
+            }
+          }
+        }
+        stats = this.mapStats(propsMap);
+      }
+
+      // Apply base crit defaults if not set
+      if (stats.critRate === 0) stats.critRate = 0.05;
+      if (stats.critDmg === 0) stats.critDmg = 0.50;
 
       let equipment: PlayerEquipment | undefined;
       if (avatar.equipment) {
@@ -214,7 +239,8 @@ export class EnkaClient {
         id: r.tid,
         type: r.type,
         level: r.level,
-        mainAffixId: r.mainAffixId
+        mainAffixId: r.mainAffixId,
+        subAffixes: r.subAffixList
       }));
 
       return {
@@ -224,7 +250,8 @@ export class EnkaClient {
         eidolon: avatar.rank,
         stats,
         equipment,
-        relics
+        relics,
+        skillTreePoints: avatar.skillTreeList
       };
     });
 
@@ -244,10 +271,11 @@ export class EnkaClient {
     for (const [enkaKey, value] of Object.entries(rawMap)) {
       const sdkKey = ENKA_PROPERTY_MAP[enkaKey];
       if (sdkKey && sdkKey in stats) {
-        (stats as unknown as Record<string, number>)[sdkKey] = value;
+        (stats as unknown as Record<string, number>)[sdkKey] += value;
       }
     }
 
     return stats;
   }
 }
+
