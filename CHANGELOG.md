@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `skillTreePoints` on `PlayerCharacter`, `subAffixes` on `PlayerRelic`.
 - Codename maps for element, path, and relic slot (`hsr_code_names.ts`).
 
+### Fixed
+- `EnkaClient` now computes character stats from equipment and relic `_flat.props` when `_statsMap` is omitted by Enka.
+
 ## [2.1.0] - 2026-08-28
 
 ### Added
