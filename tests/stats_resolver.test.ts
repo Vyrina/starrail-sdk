@@ -52,6 +52,20 @@ const data: StatsResolverData = {
     '61014': { id: '61014', name: 'Feet', set_id: '102', rarity: 5, type: 'FOOT', icon: '' },
     '63041': { id: '63041', name: 'Sphere', set_id: '104', rarity: 5, type: 'NECK', icon: '' },
     '63042': { id: '63042', name: 'Rope', set_id: '104', rarity: 5, type: 'OBJECT', icon: '' }
+  },
+  characterPromotions: {
+    '1001': {
+      id: '1001',
+      values: [
+        { hp: { base: 144, step: 7.2 }, atk: { base: 69.6, step: 3.48 }, def: { base: 78, step: 3.9 }, spd: { base: 101, step: 0 }, crit_rate: { base: 0.05, step: 0 }, crit_dmg: { base: 0.5, step: 0 }, taunt: { base: 150, step: 0 } },
+        { hp: { base: 201.6, step: 7.2 }, atk: { base: 97.44, step: 3.48 }, def: { base: 109.2, step: 3.9 }, spd: { base: 101, step: 0 }, crit_rate: { base: 0.05, step: 0 }, crit_dmg: { base: 0.5, step: 0 }, taunt: { base: 150, step: 0 } },
+        { hp: { base: 259.2, step: 7.2 }, atk: { base: 125.28, step: 3.48 }, def: { base: 140.4, step: 3.9 }, spd: { base: 101, step: 0 }, crit_rate: { base: 0.05, step: 0 }, crit_dmg: { base: 0.5, step: 0 }, taunt: { base: 150, step: 0 } },
+        { hp: { base: 316.8, step: 7.2 }, atk: { base: 153.12, step: 3.48 }, def: { base: 171.6, step: 3.9 }, spd: { base: 101, step: 0 }, crit_rate: { base: 0.05, step: 0 }, crit_dmg: { base: 0.5, step: 0 }, taunt: { base: 150, step: 0 } },
+        { hp: { base: 374.4, step: 7.2 }, atk: { base: 180.96, step: 3.48 }, def: { base: 202.8, step: 3.9 }, spd: { base: 101, step: 0 }, crit_rate: { base: 0.05, step: 0 }, crit_dmg: { base: 0.5, step: 0 }, taunt: { base: 150, step: 0 } },
+        { hp: { base: 432, step: 7.2 }, atk: { base: 208.8, step: 3.48 }, def: { base: 234, step: 3.9 }, spd: { base: 101, step: 0 }, crit_rate: { base: 0.05, step: 0 }, crit_dmg: { base: 0.5, step: 0 }, taunt: { base: 150, step: 0 } },
+        { hp: { base: 489.6, step: 7.2 }, atk: { base: 236.64, step: 3.48 }, def: { base: 265.2, step: 3.9 }, spd: { base: 101, step: 0 }, crit_rate: { base: 0.05, step: 0 }, crit_dmg: { base: 0.5, step: 0 }, taunt: { base: 150, step: 0 } }
+      ]
+    }
   }
 };
 
@@ -60,6 +74,31 @@ function char(overrides: Partial<PlayerCharacter> = {}): PlayerCharacter {
 }
 
 describe('resolveFullStats', () => {
+  it('base HP/ATK/DEF/SPD from promotions', () => {
+    const s = resolveFullStats(char(), data);
+    // promotion 6, level 80: base + step * 79
+    expect(s.baseHp).toBeCloseTo(489.6 + 7.2 * 79, 1);
+    expect(s.baseAtk).toBeCloseTo(236.64 + 3.48 * 79, 1);
+    expect(s.baseDef).toBeCloseTo(265.2 + 3.9 * 79, 1);
+    expect(s.baseSpeed).toBe(101);
+    expect(s.critRate).toBeCloseTo(0.05, 4);
+    expect(s.critDmg).toBeCloseTo(0.50, 4);
+  });
+
+  it('promo 0 lvl 1 = raw base', () => {
+    const s = resolveFullStats(char({ level: 1, promotion: 0 }), data);
+    expect(s.baseHp).toBeCloseTo(144, 1);
+    expect(s.baseAtk).toBeCloseTo(69.6, 1);
+    expect(s.baseDef).toBeCloseTo(78, 1);
+  });
+
+  it('no promotions = zero base stats', () => {
+    const { characterPromotions, ...noPromo } = data;
+    const s = resolveFullStats(char(), noPromo);
+    expect(s.baseHp).toBe(0);
+    expect(s.critRate).toBe(0);
+  });
+
   it('trace stat nodes sum correctly', () => {
     const c = char({
       skillTreePoints: [
@@ -83,9 +122,9 @@ describe('resolveFullStats', () => {
     expect(s.percentDef).toBeCloseTo(0.24);
   });
 
-  it('LC with empty properties (conditional) = no stats', () => {
+  it('LC with empty properties = base crit only', () => {
     const s = resolveFullStats(char({ equipment: { id: 20000, level: 80, promotion: 6, rank: 1 } }), data);
-    expect(s.critRate).toBe(0);
+    expect(s.critRate).toBeCloseTo(0.05, 4);
   });
 
   it('2pc set bonus only', () => {
@@ -125,7 +164,7 @@ describe('resolveFullStats', () => {
     expect(s.iceDmgBoost).toBeCloseTo(0.1);
   });
 
-  it('all 3 sources combined', () => {
+  it('all sources combined', () => {
     const s = resolveFullStats(char({
       skillTreePoints: [{ pointId: 1001201, level: 1 }],
       equipment: { id: 20003, level: 80, promotion: 6, rank: 1 },
@@ -136,6 +175,8 @@ describe('resolveFullStats', () => {
     }), data);
     expect(s.iceDmgBoost).toBeCloseTo(0.032 + 0.1);
     expect(s.percentDef).toBeCloseTo(0.16);
+    expect(s.critRate).toBeCloseTo(0.05, 4);
+    expect(s.baseSpeed).toBe(101);
   });
 
   it('does not mutate input', () => {

@@ -124,3 +124,24 @@ export interface StarRailResLightConeRank {
   params: number[][];
   properties: StarRailResStatProperty[][];
 }
+
+export interface StarRailResPromotionValue {
+  base: number;
+  step: number;
+}
+
+export interface StarRailResPromotionTier {
+  hp: StarRailResPromotionValue;
+  atk: StarRailResPromotionValue;
+  def: StarRailResPromotionValue;
+  spd: StarRailResPromotionValue;
+  crit_rate: StarRailResPromotionValue;
+  crit_dmg: StarRailResPromotionValue;
+  taunt: StarRailResPromotionValue;
+}
+
+export interface StarRailResCharacterPromotion {
+  id: string;
+  values: StarRailResPromotionTier[];
+}
+

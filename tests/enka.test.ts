@@ -280,7 +280,7 @@ describe('EnkaClient', () => {
       expect(char.stats.percentHp).toBeCloseTo(0.0778, 4);
     });
 
-    it('applies base crit defaults when no crit data is present', async () => {
+    it('no base crit without promotion data', async () => {
       const noCritData = {
         detailInfo: {
           uid: 800111222,
@@ -311,8 +311,20 @@ describe('EnkaClient', () => {
       const profile = await client.getProfile('800111222');
       const char = profile.characters[0];
 
-      expect(char.stats.critRate).toBe(0.05);
-      expect(char.stats.critDmg).toBe(0.50);
+      expect(char.stats.critRate).toBe(0);
+      expect(char.stats.critDmg).toBe(0);
+    });
+
+    it('profile has headIcon', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve(mockFlatProps)
+      }));
+
+      const client = new EnkaClient();
+      const profile = await client.getProfile('800654321');
+      expect(profile.headIcon).toBe(200102);
     });
   });
 });

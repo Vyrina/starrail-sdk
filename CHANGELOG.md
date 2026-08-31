@@ -5,6 +5,17 @@ All notable changes to `starrail-sdk` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-08-31
+
+### Added
+- `resolveFullStats` now computes character base HP/ATK/DEF/SPD from `character_promotions.json`.
+- `StarRailResClient.getCharacterPromotions()`.
+- `headIcon` on `PlayerProfile`.
+- `characterPromotions` on `StatsResolverData` and `StarRailResCharacterPromotion` types.
+
+### Changed
+- Base CRIT (5% CR / 50% CD) moved from `EnkaClient` to `resolveFullStats` via promotion data.
+
 ## [2.2.0] - 2026-08-30
 
 ### Added

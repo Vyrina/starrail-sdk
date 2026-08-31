@@ -6,6 +6,7 @@ export interface PlayerProfile {
   nickname: string;
   level: number;
   worldLevel: number;
+  headIcon: number;
   signature: string;
   characters: PlayerCharacter[];
 }

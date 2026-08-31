@@ -213,6 +213,7 @@ const relics = await res.getRelics();
 const relicSets = await res.getRelicSets();
 const skillTrees = await res.getSkillTrees();
 const lightConeRanks = await res.getLightConeRanks();
+const characterPromotions = await res.getCharacterPromotions();
 ```
 
 ### Resolvers
@@ -238,7 +239,7 @@ console.log(char.lightCone?.name);                // "Moment of Victory"
 console.log(char.relics[0].setName);              // "Knight of Purity Palace"
 ```
 
-#### Full Stats (Traces + LC Passive + Set Bonus)
+#### Full Stats (Base + Traces + LC Passive + Set Bonus)
 
 ```typescript
 import { resolveFullStats } from 'starrail-sdk';
@@ -248,10 +249,12 @@ const statsData = {
   lightConeRanks: await res.getLightConeRanks(),
   relicSets: await res.getRelicSets(),
   relics: await res.getRelics(),
+  characterPromotions: await res.getCharacterPromotions(),
 };
 
 const fullStats = resolveFullStats(profile.characters[0], statsData);
-console.log(fullStats.critRate, fullStats.critDmg); // includes trace + LC + set bonuses
+console.log(fullStats.baseHp, fullStats.baseSpeed); // character base stats from promotions
+console.log(fullStats.critRate, fullStats.critDmg);  // includes base 5%/50% + trace + LC + set
 ```
 
 ### Errors

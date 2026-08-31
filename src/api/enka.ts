@@ -221,10 +221,6 @@ export class EnkaClient {
         stats = this.mapStats(propsMap);
       }
 
-      // Apply base crit defaults if not set
-      if (stats.critRate === 0) stats.critRate = 0.05;
-      if (stats.critDmg === 0) stats.critDmg = 0.50;
-
       let equipment: PlayerEquipment | undefined;
       if (avatar.equipment) {
         equipment = {
@@ -260,6 +256,7 @@ export class EnkaClient {
       nickname: info.nickname,
       level: info.level,
       worldLevel: info.worldLevel,
+      headIcon: info.headIcon,
       signature: info.signature ?? '',
       characters
     };

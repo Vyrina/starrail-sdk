@@ -5,7 +5,8 @@ import type {
   StarRailResLightConeRank,
   StarRailResRelicSet,
   StarRailResRelic,
-  StarRailResStatProperty
+  StarRailResStatProperty,
+  StarRailResCharacterPromotion
 } from '../types/api.js';
 import { ENKA_PROPERTY_MAP } from '../constants/enka_properties.js';
 
@@ -14,11 +15,25 @@ export interface StatsResolverData {
   lightConeRanks: Record<string, StarRailResLightConeRank>;
   relicSets: Record<string, StarRailResRelicSet>;
   relics: Record<string, StarRailResRelic>;
+  characterPromotions?: Record<string, StarRailResCharacterPromotion>;
 }
 
-/** Sums trace, LC superimposition, and relic set bonuses into a copy of character.stats. */
+/** Sums character base stats, trace, LC superimposition, and relic set bonuses into a copy of character.stats. */
 export function resolveFullStats(character: PlayerCharacter, data: StatsResolverData): ComputedStats {
   const stats: ComputedStats = { ...character.stats };
+
+  // Character base stats from promotion data
+  const promo = data.characterPromotions?.[String(character.id)];
+  if (promo) {
+    const tier = promo.values[character.promotion] ?? promo.values[0];
+    const lvl = character.level;
+    stats.baseHp += tier.hp.base + tier.hp.step * (lvl - 1);
+    stats.baseAtk += tier.atk.base + tier.atk.step * (lvl - 1);
+    stats.baseDef += tier.def.base + tier.def.step * (lvl - 1);
+    stats.baseSpeed += tier.spd.base + tier.spd.step * (lvl - 1);
+    stats.critRate += tier.crit_rate.base;
+    stats.critDmg += tier.crit_dmg.base;
+  }
 
   // Trace stat nodes
   if (character.skillTreePoints) {

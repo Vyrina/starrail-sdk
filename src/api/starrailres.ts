@@ -1,6 +1,6 @@
 import { LRUCache } from './cache.js';
 import { HSRSDKError, HSRDataNotFoundError, HSRRateLimitError, HSRTimeoutError } from '../types/errors.js';
-import type { StarRailResCharacter, StarRailResLightCone, StarRailResRelic, StarRailResRelicSet, StarRailResSkillTree, StarRailResLightConeRank } from '../types/api.js';
+import type { StarRailResCharacter, StarRailResLightCone, StarRailResRelic, StarRailResRelicSet, StarRailResSkillTree, StarRailResLightConeRank, StarRailResCharacterPromotion } from '../types/api.js';
 import { SDK_VERSION } from '../version.js';
 
 const SUPPORTED_LANGS = ['en', 'cn', 'jp', 'kr'] as const;
@@ -101,6 +101,11 @@ export class StarRailResClient {
   /** Fetches the light cone rank (superimposition) index. */
   async getLightConeRanks(): Promise<Record<string, StarRailResLightConeRank>> {
     return this.fetchResource<Record<string, StarRailResLightConeRank>>('light_cone_ranks.json');
+  }
+
+  /** Fetches the character promotion (ascension base stats) index. */
+  async getCharacterPromotions(): Promise<Record<string, StarRailResCharacterPromotion>> {
+    return this.fetchResource<Record<string, StarRailResCharacterPromotion>>('character_promotions.json');
   }
 
   /** Clears the internal response cache. */
