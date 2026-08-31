@@ -185,4 +185,10 @@ describe('resolveFullStats', () => {
     resolveFullStats(c, data);
     expect(c.stats.iceDmgBoost).toBe(before);
   });
+
+  it('out of range promotion falls back to tier 0', () => {
+    const s = resolveFullStats(char({ level: 1, promotion: 99 }), data);
+    expect(s.baseHp).toBeCloseTo(144, 1);
+  });
 });
+

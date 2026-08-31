@@ -201,4 +201,24 @@ describe('StarRailResClient', () => {
       expect(fetchMock).toHaveBeenNthCalledWith(3, 'https://secondary-cdn.com/en/characters.json', expect.any(Object));
     });
   });
+
+  describe('resource endpoints', () => {
+    it('resource getter methods return parsed json', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({ ok: true })
+      }));
+
+      const client = new StarRailResClient('en');
+
+      expect(await client.getLightCones()).toEqual({ ok: true });
+      expect(await client.getRelics()).toEqual({ ok: true });
+      expect(await client.getRelicSets()).toEqual({ ok: true });
+      expect(await client.getSkillTrees()).toEqual({ ok: true });
+      expect(await client.getLightConeRanks()).toEqual({ ok: true });
+      expect(await client.getCharacterPromotions()).toEqual({ ok: true });
+    });
+  });
 });
+
