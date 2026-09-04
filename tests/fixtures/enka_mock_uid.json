@@ -34,6 +34,11 @@
             "mainAffixId": 2
           }
         ],
+        "skillTreeList": [
+          { "pointId": 1001001, "level": 6 },
+          { "pointId": 1001201, "level": 1 },
+          { "pointId": 1001202, "level": 1 }
+        ],
         "_statsMap": {
           "HPBase": 1047.82,
           "HPDelta": 352.4,

@@ -199,10 +199,12 @@ export class EnkaClient {
     }
     const characters: PlayerCharacter[] = (info.avatarDetailList ?? []).map(avatar => {
       let stats: ComputedStats;
+      let statsSource: 'statsMap' | 'flatProps';
 
       if (avatar._statsMap && Object.keys(avatar._statsMap).length > 0) {
-        // Legacy path: pre-computed stats map
+        // _statsMap: pre-computed, base stats already included
         stats = this.mapStats(avatar._statsMap);
+        statsSource = 'statsMap';
       } else {
         // Real API path: aggregate _flat.props from equipment + relics
         const propsMap: Record<string, number> = {};
@@ -219,6 +221,7 @@ export class EnkaClient {
           }
         }
         stats = this.mapStats(propsMap);
+        statsSource = 'flatProps';
       }
 
       let equipment: PlayerEquipment | undefined;
@@ -245,6 +248,7 @@ export class EnkaClient {
         promotion: avatar.promotion,
         eidolon: avatar.rank,
         stats,
+        statsSource,
         equipment,
         relics,
         skillTreePoints: avatar.skillTreeList

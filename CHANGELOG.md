@@ -5,6 +5,24 @@ All notable changes to `starrail-sdk` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2026-09-05
+
+### Fixed
+
+- `resolveFullStats` no longer double-counts base HP/ATK/DEF/SPD/CritRate/CritDmg when the character was parsed via Enka's `_statsMap` path.
+- `applyProps()` no longer silently drops `BaseSpeed`, `HealRatioBase`, `HealTakenRatio`, and `ElationDamageAddedRatioBase` property types.
+
+### Added
+
+- `statsSource` field on `PlayerCharacter` (`'statsMap' | 'flatProps'`), indicates which Enka API path produced the character's stats.
+- `healBoost`, `healTakenBoost`, `elationDmgBoost` fields on `ComputedStats`.
+- `BaseSpeed`, `HealRatioBase`, `HealTakenRatio`, `ElationDamageAddedRatioBase` entries in `ENKA_PROPERTY_MAP`.
+- Tests for `statsSource` marker, double-count regression, `skillTreeList` parsing, and property map coverage.
+
+### Changed
+
+- `resolveFullStats` JSDoc now documents that it is mandatory for correct crit values on the `flatProps` path, and notes the eidolon data-source limitation.
+
 ## [2.3.0] - 2026-08-31
 
 ### Added

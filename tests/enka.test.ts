@@ -83,6 +83,24 @@ describe('EnkaClient', () => {
       expect(char.stats.energyRecovery).toBe(0.1);
     });
 
+    it('sets statsSource to statsMap when _statsMap is present', async () => {
+      const client = new EnkaClient();
+      const profile = await client.getProfile('800123456');
+      expect(profile.characters[0].statsSource).toBe('statsMap');
+    });
+
+    it('parses skillTreeList into skillTreePoints', async () => {
+      const client = new EnkaClient();
+      const profile = await client.getProfile('800123456');
+      const points = profile.characters[0].skillTreePoints;
+
+      expect(points).toBeDefined();
+      expect(points).toHaveLength(3);
+      expect(points![0]).toEqual({ pointId: 1001001, level: 6 });
+      expect(points![1]).toEqual({ pointId: 1001201, level: 1 });
+      expect(points![2]).toEqual({ pointId: 1001202, level: 1 });
+    });
+
     it('parses equipment data', async () => {
       const client = new EnkaClient();
       const profile = await client.getProfile('800123456');
@@ -278,6 +296,18 @@ describe('EnkaClient', () => {
       expect(char.stats.flatSpeed).toBeCloseTo(2.3, 1);
       expect(char.stats.flatDef).toBeCloseTo(33.87, 1);
       expect(char.stats.percentHp).toBeCloseTo(0.0778, 4);
+    });
+
+    it('sets statsSource to flatProps when _statsMap is absent', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve(mockFlatProps)
+      }));
+
+      const client = new EnkaClient();
+      const profile = await client.getProfile('800654321');
+      expect(profile.characters[0].statsSource).toBe('flatProps');
     });
 
     it('no base crit without promotion data', async () => {

@@ -19,8 +19,11 @@ export const ENKA_PROPERTY_MAP: Record<string, string> = {
   "StatusResistanceBase": "effectRes",
   "BreakDamageAddedRatioBase": "breakEffect",
   "SPRatioBase": "energyRecovery",
+  "HealRatioBase": "healBoost",
+  "HealTakenRatio": "healTakenBoost",
 
   // Equipment/Relic _flat.props style (no "Base" suffix)
+  "BaseSpeed": "baseSpeed",
   "BaseHP": "baseHp",
   "BaseAttack": "baseAtk",
   "BaseDefence": "baseDef",
@@ -39,5 +42,6 @@ export const ENKA_PROPERTY_MAP: Record<string, string> = {
   "WindAddedRatio": "windDmgBoost",
   "QuantumAddedRatio": "quantumDmgBoost",
   "ImaginaryAddedRatio": "imaginaryDmgBoost",
+  "ElationDamageAddedRatioBase": "elationDmgBoost",
   "AllDamageTypeAddedRatio": "allDmgBoost"
 };

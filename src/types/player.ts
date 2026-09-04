@@ -17,6 +17,8 @@ export interface PlayerCharacter {
   promotion: number;
   eidolon: number;
   stats: ComputedStats;
+  // Which Enka path produced stats: _statsMap has base stats baked in, _flat.props does not
+  statsSource: 'statsMap' | 'flatProps';
   equipment?: PlayerEquipment;
   relics: PlayerRelic[];
   skillTreePoints?: EnkaSkillTreePoint[];

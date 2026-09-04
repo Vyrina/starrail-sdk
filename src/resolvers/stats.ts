@@ -18,13 +18,18 @@ export interface StatsResolverData {
   characterPromotions?: Record<string, StarRailResCharacterPromotion>;
 }
 
-/** Sums character base stats, trace, LC superimposition, and relic set bonuses into a copy of character.stats. */
+/**
+ * Sums character base stats, trace, LC superimposition, and relic set bonuses into a copy of character.stats.
+ * Skips base stat addition when statsSource is 'statsMap' (already included by Enka).
+ * Required for correct critRate/critDmg on the flatProps path (base crit is not in _flat.props).
+ * Note: eidolons are not resolved because character_ranks.json lacks structured property data.
+ */
 export function resolveFullStats(character: PlayerCharacter, data: StatsResolverData): ComputedStats {
   const stats: ComputedStats = { ...character.stats };
 
   // Character base stats from promotion data
   const promo = data.characterPromotions?.[String(character.id)];
-  if (promo) {
+  if (character.statsSource !== 'statsMap' && promo) {
     const tier = promo.values[character.promotion] ?? promo.values[0];
     const lvl = character.level;
     stats.baseHp += tier.hp.base + tier.hp.step * (lvl - 1);

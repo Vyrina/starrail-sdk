@@ -3,6 +3,7 @@ import { resolveFullStats } from '../src/resolvers/stats.js';
 import { createEmptyStats } from '../src/types/stats.js';
 import type { PlayerCharacter } from '../src/types/player.js';
 import type { StatsResolverData } from '../src/resolvers/stats.js';
+import { ENKA_PROPERTY_MAP } from '../src/constants/enka_properties.js';
 
 const data: StatsResolverData = {
   skillTrees: {
@@ -70,7 +71,7 @@ const data: StatsResolverData = {
 };
 
 function char(overrides: Partial<PlayerCharacter> = {}): PlayerCharacter {
-  return { id: 1001, level: 80, promotion: 6, eidolon: 0, stats: createEmptyStats(), relics: [], ...overrides };
+  return { id: 1001, level: 80, promotion: 6, eidolon: 0, stats: createEmptyStats(), statsSource: 'flatProps', relics: [], ...overrides };
 }
 
 describe('resolveFullStats', () => {
@@ -190,5 +191,69 @@ describe('resolveFullStats', () => {
     const s = resolveFullStats(char({ level: 1, promotion: 99 }), data);
     expect(s.baseHp).toBeCloseTo(144, 1);
   });
+
+  it('statsMap path skips promotion base stats', () => {
+    const prePopulated = createEmptyStats();
+    prePopulated.baseHp = 1047.82;
+    prePopulated.baseAtk = 582.12;
+    prePopulated.baseDef = 485.64;
+    prePopulated.baseSpeed = 96;
+    prePopulated.critRate = 0.302;
+    prePopulated.critDmg = 1.124;
+
+    const c = char({ stats: prePopulated, statsSource: 'statsMap' });
+    const s = resolveFullStats(c, data);
+
+    expect(s.baseHp).toBe(1047.82);
+    expect(s.baseAtk).toBe(582.12);
+    expect(s.baseDef).toBe(485.64);
+    expect(s.baseSpeed).toBe(96);
+    expect(s.critRate).toBe(0.302);
+    expect(s.critDmg).toBe(1.124);
+  });
+
+  it('flatProps path adds promotion base stats', () => {
+    const c = char({ statsSource: 'flatProps' });
+    const s = resolveFullStats(c, data);
+    // promotion 6, level 80: base + step * 79
+    expect(s.baseHp).toBeCloseTo(489.6 + 7.2 * 79, 1);
+    expect(s.baseAtk).toBeCloseTo(236.64 + 3.48 * 79, 1);
+    expect(s.baseDef).toBeCloseTo(265.2 + 3.9 * 79, 1);
+    expect(s.baseSpeed).toBe(101);
+    expect(s.critRate).toBeCloseTo(0.05, 4);
+    expect(s.critDmg).toBeCloseTo(0.50, 4);
+  });
 });
 
+describe('ENKA_PROPERTY_MAP coverage', () => {
+  const allTypes = new Set<string>();
+
+  for (const tree of Object.values(data.skillTrees)) {
+    for (const lvl of tree.levels) {
+      for (const p of lvl.properties) allTypes.add(p.type);
+    }
+  }
+  for (const lc of Object.values(data.lightConeRanks)) {
+    for (const rank of lc.properties) {
+      for (const p of rank) allTypes.add(p.type);
+    }
+  }
+  for (const set of Object.values(data.relicSets)) {
+    for (const tier of set.properties) {
+      for (const p of tier) allTypes.add(p.type);
+    }
+  }
+
+  const emptyStats = createEmptyStats();
+
+  it('every property type in fixture data maps to a valid ComputedStats key', () => {
+    const unmapped: string[] = [];
+    for (const type of allTypes) {
+      const mapped = ENKA_PROPERTY_MAP[type];
+      if (!mapped || !(mapped in emptyStats)) {
+        unmapped.push(type);
+      }
+    }
+    expect(unmapped).toEqual([]);
+  });
+});

@@ -20,6 +20,8 @@ export interface ComputedStats extends BaseStats {
   effectRes: number;
   breakEffect: number;
   energyRecovery: number;
+  healBoost: number;
+  healTakenBoost: number;
   physicalDmgBoost: number;
   fireDmgBoost: number;
   iceDmgBoost: number;
@@ -27,6 +29,7 @@ export interface ComputedStats extends BaseStats {
   windDmgBoost: number;
   quantumDmgBoost: number;
   imaginaryDmgBoost: number;
+  elationDmgBoost: number;
   allDmgBoost: number;
 }
 
@@ -52,6 +55,8 @@ export function createEmptyStats(): ComputedStats {
     effectRes: 0,
     breakEffect: 0,
     energyRecovery: 0,
+    healBoost: 0,
+    healTakenBoost: 0,
     physicalDmgBoost: 0,
     fireDmgBoost: 0,
     iceDmgBoost: 0,
@@ -59,6 +64,7 @@ export function createEmptyStats(): ComputedStats {
     windDmgBoost: 0,
     quantumDmgBoost: 0,
     imaginaryDmgBoost: 0,
+    elationDmgBoost: 0,
     allDmgBoost: 0
   };
 }
